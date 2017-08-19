@@ -36,6 +36,7 @@ RUN cd /opt/emsdk/emsdk-portable/ \
   && apt-get clean
 
 COPY entrypoint.sh /opt/entrypoint.sh
+RUN chmod +x /opt/entrypoint.sh
 
 ENTRYPOINT ["/opt/entrypoint.sh"]
 CMD /bin/bash
