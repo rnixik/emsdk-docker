@@ -12,18 +12,9 @@ RUN mkdir -p /opt/emsdk \
   && ./emsdk install latest \
   && ./emsdk activate latest \
   && /bin/bash ./emsdk_env.sh
-  
-# Setting env
-SHELL ["/bin/bash", "-c"]
-RUN source /opt/emsdk/emsdk-portable/emsdk_env.sh \ 
-  && echo "PATH=$PATH">>~/env.txt \
-  && echo "EMSDK=$EMSDK">>~/env.txt \
-  && echo "EM_CONFIG=$EM_CONFIG">>~/env.txt \
-  && echo "EMSCRIPTEN=$EMSCRIPTEN">>~/env.txt
-ENV BASH_ENV ~/env.txt
 
+# Cleaning
 RUN cd /opt/emsdk/emsdk-portable/ \
-  && rm -rf ./clang/tag-*/src \
   && rm -rf ./emscripten/tag-*/tests \
   && rm -rf ./emscripten/tag-*/site \
   && rm -rf ./emscripten/tag-*/docs \
@@ -33,7 +24,18 @@ RUN cd /opt/emsdk/emsdk-portable/ \
   && find . -name "*.tmp" -exec rm {} \; \
   && apt-get -y --purge remove curl \
   && apt-get -y autoremove \
-  && apt-get clean
+  && apt-get clean  
+  
+# Setting env
+SHELL ["/bin/bash", "-c"]
+RUN source /opt/emsdk/emsdk-portable/emsdk_env.sh \ 
+  && echo "PATH=$PATH">>~/env.txt \
+  && echo "EMSDK=$EMSDK">>~/env.txt \
+  && echo "EM_CONFIG=$EM_CONFIG">>~/env.txt \
+  && echo "EMSCRIPTEN=$EMSCRIPTEN">>~/env.txt
+ENV BASH_ENV ~/env.txt
+RUN cat ~/env.txt>>/root/.bashrc
+
 
 COPY entrypoint.sh /opt/entrypoint.sh
 RUN chmod +x /opt/entrypoint.sh
